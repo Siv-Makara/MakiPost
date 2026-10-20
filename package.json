@@ -1,0 +1,55 @@
+{
+  "name": "makipost",
+  "productName": "MakiPost",
+  "version": "0.7.2",
+  "description": "MakiPost — a fast desktop API client",
+  "author": {
+    "name": "makarasiv058",
+    "email": "makarasiv058@gmail.com"
+  },
+  "license": "MIT",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "dist": "electron-vite build && electron-builder",
+    "dist:win": "electron-vite build && electron-builder --win",
+    "dist:mac": "electron-vite build && electron-builder --mac",
+    "dist:linux": "electron-vite build && electron-builder --linux",
+    "release": "electron-vite build && electron-builder --win --publish always"
+  },
+  "devDependencies": {
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-html": "^6.4.12",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@fontsource/kantumruy-pro": "^5.3.0",
+    "@lezer/highlight": "^1.2.5",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "autoprefixer": "^10.6.1",
+    "codemirror": "^6.0.2",
+    "electron": "^31.7.7",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "pinia": "^2.3.1",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.19",
+    "vite": "^5.4.21",
+    "vue": "^3.5.44"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.8.9",
+    "undici": "^6.21.0"
+  },
+  "copyright": "Copyright © 2026 makarasiv058@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makarasiv058/makipost.git"
+  },
+  "homepage": "https://github.com/makarasiv058/makipost"
+}

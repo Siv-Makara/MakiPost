@@ -1,0 +1,37 @@
+appId: app.makipost.client
+productName: MakiPost
+copyright: "Copyright © 2026 makarasiv058@gmail.com"
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**/*
+  - package.json
+asarUnpack: []
+win:
+  target:
+    - nsis
+    - portable
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  artifactName: ${productName}-Setup-${version}.${ext}
+portable:
+  artifactName: ${productName}-Portable-${version}.${ext}
+# Where `npm run release` uploads builds, and where installed copies look for updates.
+publish:
+  provider: github
+  owner: makarasiv058
+  repo: makipost
+  releaseType: draft
+mac:
+  target:
+    - dmg
+    - zip
+  category: public.app-category.developer-tools
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Development
+  maintainer: makarasiv058@gmail.com

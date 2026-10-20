@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Theme tokens. Colors are "r g b" channel triplets so they can be used as
+ * rgb(var(--x) / alpha). The theme engine (stage 4) overwrites these at runtime.
+ */
+:root {
+  --sar-bg: 20 22 28;
+  --sar-panel: 28 31 39;
+  --sar-surface: 37 41 51;
+  --sar-text: 228 231 238;
+  --sar-muted: 140 147 163;
+  --sar-border: 52 57 70;
+  --sar-accent: 99 132 255;
+  --sar-accent-fg: 255 255 255;
+  --sar-success: 52 199 123;
+  --sar-warning: 240 170 60;
+  --sar-danger: 240 82 82;
+  --sar-info: 86 168 245;
+
+  --sar-method-get: 52 199 123;
+  --sar-method-post: 240 170 60;
+  --sar-method-put: 86 168 245;
+  --sar-method-patch: 178 120 245;
+  --sar-method-delete: 240 82 82;
+
+  /* Panel opacity: < 1 lets a background image show through (stage 4). */
+  --sar-panel-alpha: 1;
+
+  /* Code syntax colors */
+  --sar-code-key: 120 170 255;
+  --sar-code-string: 120 210 150;
+  --sar-code-number: 240 170 90;
+  --sar-code-bool: 200 140 250;
+  --sar-code-null: 160 160 175;
+  --sar-code-punct: 150 156 172;
+
+  /* Kantumruy Pro is loaded for the Khmer subset only, so Latin text keeps the system UI font. */
+  --sar-font-sans: 'Kantumruy Pro', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --sar-font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, 'SF Mono', Menlo, monospace;
+
+  color-scheme: dark;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background: rgb(var(--sar-bg));
+  color: rgb(var(--sar-text));
+  font-family: var(--sar-font-sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+input,
+textarea,
+.cm-editor {
+  user-select: text;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--sar-muted) / 0.3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(var(--sar-muted) / 0.5);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Indeterminate progress bar shown while a request is in flight. */
+.sar-progress::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: rgb(var(--sar-accent));
+  animation: sar-progress 0.9s ease-in-out infinite;
+}
+@keyframes sar-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@layer components {
+  .panel {
+    background: rgb(var(--sar-panel) / var(--sar-panel-alpha));
+  }
+
+  .input {
+    @apply h-8 w-full rounded-md border border-line bg-surface/60 px-2.5 text-fg outline-none
+      placeholder:text-muted/70 focus:border-accent;
+  }
+
+  .input-bare {
+    @apply h-8 w-full bg-transparent px-2 text-fg outline-none placeholder:text-muted/60;
+  }
+
+  .select {
+    @apply h-8 rounded-md border border-line bg-surface px-2 text-fg outline-none focus:border-accent;
+  }
+
+  .btn {
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-line bg-surface/70 px-3
+      font-medium text-fg transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-accent {
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-accent px-4 font-semibold
+      text-accent-fg transition hover:brightness-110 active:brightness-95 disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex h-7 items-center justify-center gap-1 rounded-md px-2 text-muted transition-colors
+      hover:bg-surface hover:text-fg;
+  }
+
+  .tab {
+    @apply relative h-9 px-3 text-muted transition-colors hover:text-fg;
+  }
+  .tab-active {
+    @apply text-fg after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-accent;
+  }
+
+  .kbd {
+    @apply rounded border border-line bg-surface px-1 font-mono text-[10px] text-muted;
+  }
+}
