@@ -27,9 +27,15 @@ publish:
   repo: MakiPost
   releaseType: draft
 mac:
+  # Built on GitHub's macOS runners (.github/workflows/macos.yml): one universal .dmg for
+  # Apple Silicon and Intel. "-" = ad-hoc signature, required for Apple Silicon to run it;
+  # without an Apple Developer ID the app isn't notarized (see README → Install → macOS).
   target:
-    - dmg
-    - zip
+    - target: dmg
+      arch: universal
+  artifactName: ${productName}-mac.${ext}
+  identity: '-'
+  hardenedRuntime: false
   category: public.app-category.developer-tools
 linux:
   target:

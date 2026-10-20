@@ -6,9 +6,14 @@ servers easy, and the whole look of the app can be themed, including your own ba
 
 Built with Electron, Vue 3, Vite, Pinia, Tailwind CSS and CodeMirror 6.
 
-**Current version: 0.7.2**
+**Current version: 0.7.3**
 
-**⬇ [Download MakiPost for Windows (.exe)](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-Setup.exe)** · [portable version](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-Portable.exe) · [all releases](https://github.com/Siv-Makara/MakiPost/releases)
+| | Download |
+|---|---|
+| **Windows** 10 / 11 | **[⬇ MakiPost-Setup.exe](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-Setup.exe)** · [portable .exe](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-Portable.exe) |
+| **macOS** 11+ (Apple Silicon and Intel) | **[⬇ MakiPost-mac.dmg](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-mac.dmg)** · [first-launch steps](#macos) |
+
+[All releases](https://github.com/Siv-Makara/MakiPost/releases)
 
 ---
 
@@ -91,10 +96,31 @@ it when you close MakiPost). The portable version doesn't auto-update; download 
 > The app isn't code-signed, so Windows SmartScreen may say *"Windows protected your PC"*.
 > Click **More info → Run anyway**.
 
-### macOS / Linux
+### macOS
 
-Run `npm run dist:mac` on a Mac (`.dmg`, `.zip`) or `npm run dist:linux` on Linux (`AppImage`,
-`.deb`). Each platform has to be built on that platform.
+1. Download **[MakiPost-mac.dmg](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-mac.dmg)**.
+   It runs natively on Apple Silicon (M1–M4) and Intel Macs, macOS 11 Big Sur or newer.
+2. Open it and drag **MakiPost** into **Applications**.
+3. **First launch:** MakiPost isn't notarized by Apple yet (that needs a paid Apple Developer
+   account), so macOS blocks it the first time:
+   - Open MakiPost once. When macOS says it can't be opened, click **Done** (not *Move to Trash*).
+   - Go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to
+     *"MakiPost" was blocked*. Confirm with your password.
+   - If macOS instead says the app **"is damaged"**, open **Terminal** and run:
+     ```bash
+     xattr -cr /Applications/MakiPost.app
+     ```
+     then open MakiPost again.
+
+   After the first launch it opens normally.
+
+**Updates on macOS:** MakiPost checks GitHub for a new version and asks *Download* or *Later*. To
+update, download the new `.dmg` and drag MakiPost into Applications again, replacing the old one.
+(Installing updates by itself needs an Apple Developer ID; Windows has this already.)
+
+### Linux
+
+Run `npm run dist:linux` on Linux to build an `AppImage` and a `.deb`.
 
 ## Quick start
 
@@ -473,7 +499,9 @@ npm run dist:linux   # AppImage + .deb                 → dist/
 npm run dist         # current platform
 ```
 
-- Build each platform on that platform.
+- Build each platform on that platform. The macOS `.dmg` is built automatically by GitHub Actions
+  (`.github/workflows/macos.yml`) on a cloud Mac whenever a version tag is pushed, and attached to
+  that release. You don't need a Mac.
 - Code signing and notarization use the usual electron-builder environment variables
   (`CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_ID`, …). Without them, builds are unsigned.
 - For a custom app icon, put `icon.ico`, `icon.icns` and a 512×512 `icon.png` in `build/`.
@@ -503,16 +531,19 @@ of MakiPost update from there.
    ```bash
    git commit -am "Release 0.7.3"
    git tag v0.7.3
-   git push --follow-tags
+   git push
+   git push origin v0.7.3
    ```
-3. Build and upload in one step:
+   Pushing the tag starts the **macOS build** on GitHub Actions (about 10 minutes). It attaches
+   `MakiPost-mac.dmg` to the `v0.7.3` release, creating a draft if there isn't one yet.
+3. Build and upload the Windows files:
    ```bash
    npm run release
    ```
-   This creates a **draft** release `v0.7.3` on GitHub with the installer, the portable `.exe`,
-   `latest.yml` and the `.blockmap`. Auto-update needs `latest.yml` and the `.blockmap`, so keep them.
-4. On GitHub, open the draft, paste the changelog, and click **Publish release**. Installed copies
-   pick it up on their next check.
+   This adds the installer, the portable `.exe`, `latest.yml` and the `.blockmap` to the `v0.7.3`
+   draft. Auto-update needs `latest.yml` and the `.blockmap`, so keep them.
+4. On GitHub, open the draft, check that all 5 files are there, paste the changelog, and click
+   **Publish release**. Installed copies pick it up on their next check.
 
 To upload by hand instead (no token): run `npm run dist:win` and drag `MakiPost-Setup.exe`,
 `MakiPost-Setup.exe.blockmap`, `latest.yml` and `MakiPost-Portable.exe` from `dist\`
@@ -621,6 +652,11 @@ setting variables, and it takes effect instantly. The Appearance store derives s
 ---
 
 ## Changelog
+
+### 0.7.3: macOS
+- **macOS download**: a universal `MakiPost-mac.dmg` for Apple Silicon and Intel, built on
+  GitHub's Mac runners and attached to each release automatically.
+- On macOS, MakiPost tells you when a new version is available and opens the download.
 
 ### 0.7.2: Hosting and auto-update
 - Releases are published on GitHub, with a download link at the top of this README.
