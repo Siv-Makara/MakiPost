@@ -8,7 +8,7 @@ Built with Electron, Vue 3, Vite, Pinia, Tailwind CSS and CodeMirror 6.
 
 **Current version: 0.7.2**
 
-**⬇ [Download MakiPost for Windows](https://github.com/Siv-Makara/MakiPost/releases/latest)**
+**⬇ [Download MakiPost for Windows (.exe)](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-Setup.exe)** · [portable version](https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-Portable.exe) · [all releases](https://github.com/Siv-Makara/MakiPost/releases)
 
 ---
 
@@ -75,14 +75,14 @@ Built with Electron, Vue 3, Vite, Pinia, Tailwind CSS and CodeMirror 6.
 
 ### Windows
 
-Download `MakiPost-Setup-x.y.z.exe` from the
+Download `MakiPost-Setup.exe` from the
 [latest release](https://github.com/Siv-Makara/MakiPost/releases/latest), or build it yourself
 (see [Packaging](#packaging)). Then run:
 
-- `MakiPost-Setup-0.7.2.exe`: installer. You can choose the install folder, and it adds desktop and
+- `MakiPost-Setup.exe`: installer. You can choose the install folder, and it adds desktop and
   Start Menu shortcuts. Uninstall from *Settings → Apps*. If you installed the old *Sar* app, you can
   uninstall it there too; MakiPost copies its settings on first launch.
-- `MakiPost-Portable-0.7.2.exe`: portable. Runs without installing.
+- `MakiPost-Portable.exe`: portable. Runs without installing.
 
 The installed version **updates itself**: it checks GitHub for a new release when it starts (and
 every 6 hours), downloads it in the background, then asks *Restart now* or *Later* (Later installs
@@ -514,8 +514,8 @@ of MakiPost update from there.
 4. On GitHub, open the draft, paste the changelog, and click **Publish release**. Installed copies
    pick it up on their next check.
 
-To upload by hand instead (no token): run `npm run dist:win` and drag `MakiPost-Setup-x.y.z.exe`,
-`MakiPost-Setup-x.y.z.exe.blockmap`, `latest.yml` and `MakiPost-Portable-x.y.z.exe` from `dist\`
+To upload by hand instead (no token): run `npm run dist:win` and drag `MakiPost-Setup.exe`,
+`MakiPost-Setup.exe.blockmap`, `latest.yml` and `MakiPost-Portable.exe` from `dist\`
 into a new release with the tag `vx.y.z`.
 
 ### Project structure
@@ -627,7 +627,10 @@ setting variables, and it takes effect instantly. The Appearance store derives s
 - The installed version updates itself from GitHub Releases (background download, *Restart now* or
   *Later*).
 - `npm run release` builds and uploads a draft release. The portable file is now named
-  `MakiPost-Portable-x.y.z.exe`.
+  `MakiPost-Portable.exe`.
+- File names no longer include the version, so
+  <https://github.com/Siv-Makara/MakiPost/releases/latest/download/MakiPost-Setup.exe> always
+  downloads the newest installer in one click.
 
 ### 0.7.1
 - The name is shown as **MakiPost - ខ្មែរ** with the Cambodian flag 🇰🇭 in the top bar, the About page

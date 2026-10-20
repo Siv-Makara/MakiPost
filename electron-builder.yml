@@ -15,9 +15,11 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
-  artifactName: ${productName}-Setup-${version}.${ext}
+  # No version in the file names, so .../releases/latest/download/MakiPost-Setup.exe
+  # is a permanent one-click link to the newest version.
+  artifactName: ${productName}-Setup.${ext}
 portable:
-  artifactName: ${productName}-Portable-${version}.${ext}
+  artifactName: ${productName}-Portable.${ext}
 # Where `npm run release` uploads builds, and where installed copies look for updates.
 publish:
   provider: github
