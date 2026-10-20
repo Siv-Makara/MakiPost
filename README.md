@@ -93,8 +93,9 @@ The installed version **updates itself**: it checks GitHub for a new release whe
 every 6 hours), downloads it in the background, then asks *Restart now* or *Later* (Later installs
 it when you close MakiPost). The portable version doesn't auto-update; download the new one.
 
-> The app isn't code-signed, so Windows SmartScreen may say *"Windows protected your PC"*.
-> Click **More info → Run anyway**.
+> The app isn't code-signed yet, so Windows may say *"Windows protected your PC"*. Click
+> **More info → Run anyway**. MakiPost is open source, built publicly by GitHub Actions from the code
+> in this repository. See [Code signing](#code-signing-and-the-windows-protected-your-pc-warning).
 
 ### macOS
 
@@ -511,43 +512,41 @@ npm run dist         # current platform
 ### Publishing a release (GitHub)
 
 Releases are hosted on GitHub: <https://github.com/Siv-Makara/MakiPost/releases>. Installed copies
-of MakiPost update from there.
+of MakiPost update from there. Everything is built in the cloud by GitHub Actions
+(`.github/workflows/release.yml`), so a release needs no tokens and no Mac.
 
-**One-time setup**
-
-1. Create a token: GitHub → *Settings → Developer settings → Personal access tokens → Tokens
-   (classic) → Generate new token*, with the **`repo`** scope (or **`public_repo`** for a public
-   repository). Copy it.
-2. Save it for your Windows user, in PowerShell (then open a new terminal):
-   ```powershell
-   setx GH_TOKEN "ghp_your_token_here"
-   ```
-   Never commit the token or paste it into a file in the project.
-
-**Each release**
-
-1. Bump `version` in `package.json` (e.g. `npm pkg set version=0.7.3`) and add a Changelog entry.
-2. Commit and push:
+1. Bump `version` in `package.json` (e.g. `npm pkg set version=0.7.4`) and add a
+   `### 0.7.4` entry to the Changelog. It becomes the release notes.
+2. Commit, tag and push:
    ```bash
-   git commit -am "Release 0.7.3"
-   git tag v0.7.3
+   git commit -am "Release 0.7.4"
+   git tag v0.7.4
    git push
-   git push origin v0.7.3
+   git push origin v0.7.4
    ```
-   Pushing the tag starts the **macOS build** on GitHub Actions (about 10 minutes). It attaches
-   `MakiPost-mac.dmg` to the `v0.7.3` release, creating a draft if there isn't one yet.
-3. Build and upload the Windows files:
-   ```bash
-   npm run release
-   ```
-   This adds the installer, the portable `.exe`, `latest.yml` and the `.blockmap` to the `v0.7.3`
-   draft. Auto-update needs `latest.yml` and the `.blockmap`, so keep them.
-4. On GitHub, open the draft, check that all 5 files are there, paste the changelog, and click
-   **Publish release**. Installed copies pick it up on their next check.
+3. That's it. In about 10 minutes GitHub builds the Windows installer, the portable `.exe` and the
+   macOS `.dmg` in parallel, uploads them with `latest.yml` and the `.blockmap`, and publishes the
+   release. Follow it in the repository's **Actions** tab. The release is published only after every
+   file is uploaded, so auto-update never sees a half-finished release.
 
-To upload by hand instead (no token): run `npm run dist:win` and drag `MakiPost-Setup.exe`,
-`MakiPost-Setup.exe.blockmap`, `latest.yml` and `MakiPost-Portable.exe` from `dist\`
-into a new release with the tag `vx.y.z`.
+To check that the builds work without releasing anything: **Actions → Release → Run workflow**,
+enter an existing tag, and leave **upload** unticked. The files are kept as downloadable
+artifacts of that run.
+
+### Code signing and the "Windows protected your PC" warning
+
+Windows shows this SmartScreen warning for installers that aren't code-signed. It can't be turned
+off from inside the app; the installer has to be signed:
+
+| Way | Cost | Result |
+|---|---|---|
+| **Microsoft Store** | Free developer account for individuals | Microsoft signs the app: **no warning at all**, one-click install, Store updates. Built as an `.msix` package. |
+| **SignPath Foundation** | Free for open-source projects (MakiPost qualifies: public, MIT) | The download from GitHub is signed. Signing runs in the `windows` job of `release.yml`. |
+| **Certum Open Source certificate** | About €30–60 / year + smart card | Signed in your own name. |
+
+A newly signed app can still show the warning for a short while, until Windows has seen enough
+downloads of it. To speed that up for a given installer, submit it at
+<https://www.microsoft.com/wdsi/filesubmission> as a *Software developer*.
 
 ### Project structure
 
