@@ -8,7 +8,7 @@ Built with Electron, Vue 3, Vite, Pinia, Tailwind CSS and CodeMirror 6.
 
 **Current version: 0.7.2**
 
-**⬇ [Download MakiPost for Windows](https://github.com/makarasiv058/makipost/releases/latest)**
+**⬇ [Download MakiPost for Windows](https://github.com/Siv-Makara/MakiPost/releases/latest)**
 
 ---
 
@@ -76,7 +76,7 @@ Built with Electron, Vue 3, Vite, Pinia, Tailwind CSS and CodeMirror 6.
 ### Windows
 
 Download `MakiPost-Setup-x.y.z.exe` from the
-[latest release](https://github.com/makarasiv058/makipost/releases/latest), or build it yourself
+[latest release](https://github.com/Siv-Makara/MakiPost/releases/latest), or build it yourself
 (see [Packaging](#packaging)). Then run:
 
 - `MakiPost-Setup-0.7.2.exe`: installer. You can choose the install folder, and it adds desktop and
@@ -482,7 +482,7 @@ npm run dist         # current platform
 
 ### Publishing a release (GitHub)
 
-Releases are hosted on GitHub: <https://github.com/makarasiv058/makipost/releases>. Installed copies
+Releases are hosted on GitHub: <https://github.com/Siv-Makara/MakiPost/releases>. Installed copies
 of MakiPost update from there.
 
 **One-time setup**

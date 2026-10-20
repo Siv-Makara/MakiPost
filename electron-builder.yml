@@ -21,8 +21,8 @@ portable:
 # Where `npm run release` uploads builds, and where installed copies look for updates.
 publish:
   provider: github
-  owner: makarasiv058
-  repo: makipost
+  owner: Siv-Makara
+  repo: MakiPost
   releaseType: draft
 mac:
   target:
