@@ -1,0 +1,122 @@
+# One tag push = one finished release.
+#   git push origin v0.7.4  →  builds Windows (windows-latest) and macOS (macos-latest) in parallel,
+#   uploads all files to the v0.7.4 release, then publishes it (installed copies update from it).
+# Run it by hand from the Actions tab with "upload" unticked to only test that the builds work;
+# the files are then kept as workflow artifacts instead.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build, e.g. v0.7.4'
+        required: true
+      upload:
+        description: 'Upload to the GitHub release and publish it'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # create and upload to releases
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+  UPLOAD: ${{ github.event_name == 'push' || inputs.upload }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - name: Create the draft release (notes from the README changelog)
+        if: env.UPLOAD == 'true'
+        run: |
+          VERSION="${TAG#v}"
+          # The "### <version>" section of the Changelog, up to the next "### ".
+          awk -v v="$VERSION" '
+            /^### / { if (on) exit; if ($2 == v || index($2, v ":") == 1) { on = 1; next } }
+            on { print }
+          ' README.md > notes.md
+          {
+            echo "**Download:** Windows [MakiPost-Setup.exe](https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/MakiPost-Setup.exe) · macOS [MakiPost-mac.dmg](https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/MakiPost-mac.dmg)"
+            echo
+            cat notes.md
+          } > body.md
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --draft --title "MakiPost - ខ្មែរ $VERSION" --notes-file body.md
+          fi
+
+  windows:
+    needs: prepare
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx electron-vite build
+      - name: Package installer + portable
+        run: npx electron-builder --win --publish never
+      # Code signing goes here once a certificate is available (see README → Code signing).
+      - name: Upload to the release
+        if: env.UPLOAD == 'true'
+        run: |
+          gh release upload "$TAG" --clobber \
+            dist/MakiPost-Setup.exe dist/MakiPost-Setup.exe.blockmap dist/latest.yml dist/MakiPost-Portable.exe
+      - name: Keep as test artifact
+        if: env.UPLOAD != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            dist/MakiPost-Setup.exe
+            dist/latest.yml
+
+  mac:
+    needs: prepare
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      # The lockfile is made on Windows; fall back to install if a macOS-only optional
+      # package (e.g. Rollup's native binary) isn't listed in it.
+      - run: npm ci || npm install --no-audit --no-fund
+      - run: npx electron-vite build
+      - name: Package universal .dmg
+        run: npx electron-builder --mac --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false' # no Apple certificate: ad-hoc signature only
+      - name: Upload to the release
+        if: env.UPLOAD == 'true'
+        run: gh release upload "$TAG" dist/MakiPost-mac.dmg --clobber
+      - name: Keep as test artifact
+        if: env.UPLOAD != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac
+          path: dist/MakiPost-mac.dmg
+
+  publish:
+    needs: [windows, mac]
+    if: ${{ github.event_name == 'push' || inputs.upload }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish the release (only now, so updates never see a half-uploaded release)
+        run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest
